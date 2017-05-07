@@ -79,6 +79,8 @@ void setup() {
   Serial.begin(9600); //Inicia a comunicação serial
 }
 
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
 void loop() {
 
 //ESTADO INICIAL, ABERTO PARA CARROS, FECHADO PARA PEDESTRES E DE DIA.
