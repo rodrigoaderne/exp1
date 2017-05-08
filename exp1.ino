@@ -50,7 +50,7 @@ void ISR_timer() {
   ldrValor = analogRead(ldrPin); //LEITURA E CONVERSAO DO VALOR DO LDR.
   if (ldrValor >= 1000){ // CASO SEJA NOITE.
     noite = 1; //SETA FLAG PARA DESLIGAR SEMAFORO.
-	toggle = !toggle;
+    toggle = !toggle;
   }  
   else noite = 0; // CASO CONTRARIO, ESTA DE DIA.
 }
