@@ -114,11 +114,10 @@ void loop() {
     digitalWrite(verm_ped, toggle_ped); // Vermelho dos psedestres PISCA
   }
   
-  
 //APOS 10s E DEPOIS DE PISCAR 3x O SEMAFORO DOS PEDESTRES, ABRE PARA CARROS E FECHA PARA PEDESTRES.
   if(CONT_botao_ped == 23){
      PISCAR = 0;
-//   digitalWrite(am_carro, LOW);
+    
     digitalWrite(verde_ped, LOW); // Verde p pedestres apagado
     digitalWrite(verm_ped, HIGH); // vermelho p pedestres
     digitalWrite(verm_carro, LOW); // vermelho p carros apagado
