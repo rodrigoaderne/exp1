@@ -1,4 +1,4 @@
-	/*EXPERIMENTO 1 - SEMÁFORO - RODRIGO E GUSTAVO. 
+  /*EXPERIMENTO 1 - SEMÁFORO - RODRIGO E GUSTAVO. 
 O SEMÁFORO CONSISTE EM UM FAROL PARA PEDESTRES E UM PARA CARROS, PARA O PEDESTRE ATRAVESSAR DEVE-SE APERTAR O BOTÃO. O PROGRAMA INICIA
 VERMELHO PARA OS PEDESTRES E VERDE PARA OS CARROS.CASO O PEDESTRE PRESSIONE O BOTÃO, AGUARDA-SE 3S E O SEMAFORO DOS CARROS MUDA PARA
 AMARELO POR 3S, APOS ISSO FICA VERMELHO PARA OS CARROS E VERDE PARA OS PEDESTRES POR 10S, NA SEQUENCIA O SEMAFORO DOS PEDESTRES PISCA 3X
@@ -7,7 +7,7 @@ VOLTANDO AO ESTADO INICIAL FOI IMPLEMENTADA UMA MAQUINA DE ESTADO ATRELADA A UM 
 BOTÃO( INTERRUPÇÃO DO BOTAO), UMA INTERRUPÇÃO A CADA 1S É CHAMADA PARA INCREMENTAR 1S NO CONTADOR. FOI IMPLEMENTADO UM SENSOR DE DIA
 E NOITE, CASO SEJA NOITE O SEMAFORO É DESLIGADO E O LED AMARELO PERMANECE PISCADO ATÉ AMANHECER. SUA LÓGICA É BASEADA EM UM LDR QUE
 SEU VALOR É CONVERTIDO POR UM A/D.*/
-/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+  /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 #include <TimerOne.h>
 
 ////////////////////////////////////////////////////////DECLARAÇÃO DE VARIAVEIS///////////////////////////////////////////////////
@@ -33,18 +33,19 @@ int ldrPin = 0; //LDR no pino analígico A1
 int ldrValor = 0; //Valor lido do LDR
 int toggle = 0; // TOGGLE PARRA AMARELO.
 int noite = 0; // FLAG PARA SINALIZAR NOITE
-
+int toggle_ped = 0;
 ///////////////////////////////////////////////////INTERRUPÇÕES//////////////////////////////////////////////////////////////
 
 // INTERRUPÇÃO DE TEMPO
 void ISR_timer() {
  
   if(buttonState == HIGH){  //SE O BOTAO DE PEDESTRE FOI PRESSIONADO INICIA O CONTADOR QUE IRÁ INCREMENTAR A CADA 1s
-  	CONT_botao_ped++;
+    CONT_botao_ped++;
   }
   
   if(PISCAR){  // CASO O SEMAFORO ESTEJA NO ESTADO PARA PISCAR LEDS DO PEDESTRE.
-    toggle = !toggle; // TOGGLE PARA ALTERAR ESTADO DOS LEDS
+    toggle_ped = !toggle_ped; // TOGGLE PARA ALTERAR ESTADO DOS LEDS
+   
   }
 
   ldrValor = analogRead(ldrPin); //LEITURA E CONVERSAO DO VALOR DO LDR.
@@ -93,13 +94,13 @@ void loop() {
   }
   
 // SE O BOTAO FOI PRESSIONADO,AGUARDA 3S, EM SEGUIDA SETA AMARELO PARA OS CARROS E APAGAR O VERDE DOS CARROS
-  if(CONT_botao_ped == 3){
+  if(CONT_botao_ped >= 3 && CONT_botao_ped < 6){
         digitalWrite(am_carro, HIGH); // amarelo p carros
         digitalWrite(verde_carro, LOW); // verde p carros apagado
   }  
   
 //APOS 3s NO AMARELO, SETA VERMELHO PARA CARROS E VERDE PARA PEDESTRES POR 10s.
-  if(CONT_botao_ped == 6){
+  if(CONT_botao_ped >= 6 && CONT_botao_ped < 16){
     digitalWrite(verm_ped, LOW); // Vermelho pedestres apagado
     digitalWrite(verde_ped, HIGH); // Verde p pedestres
     digitalWrite(verm_carro, HIGH); // Vermelho p carros
@@ -107,16 +108,17 @@ void loop() {
   }
  
  //APOS ABERTO 10S PARA OS PEDESTRE, PISCA SEMAFORO DOS PEDESTRE AVISANDO QUE IRÁ FECHAR. 
-  while((CONT_botao_ped >= 16) && (CONT_botao_ped <= 22)){  // CASO O SEMAFORO ESTEJA NO ESTADO PARA PISCAR LEDS DO PEDESTRE.
+  if((CONT_botao_ped >= 16) && (CONT_botao_ped < 23)){  // CASO O SEMAFORO ESTEJA NO ESTADO PARA PISCAR LEDS DO PEDESTRE.
     PISCAR = 1;
-    digitalWrite(verde_ped, toggle); // Verde dos pedestres PISCA
-    digitalWrite(verm_ped, toggle); // Vermelho dos psedestres PISCA
+    digitalWrite(verde_ped, toggle_ped); // Verde dos pedestres PISCA
+    digitalWrite(verm_ped, toggle_ped); // Vermelho dos psedestres PISCA
   }
-  PISCAR = 0;
+  
   
 //APOS 10s E DEPOIS DE PISCAR 3x O SEMAFORO DOS PEDESTRES, ABRE PARA CARROS E FECHA PARA PEDESTRES.
   if(CONT_botao_ped == 23){
-
+     PISCAR = 0;
+//   digitalWrite(am_carro, LOW);
     digitalWrite(verde_ped, LOW); // Verde p pedestres apagado
     digitalWrite(verm_ped, HIGH); // vermelho p pedestres
     digitalWrite(verm_carro, LOW); // vermelho p carros apagado
